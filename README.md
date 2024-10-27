@@ -28,6 +28,7 @@ The first step is to set up an EKS cluster with Fargate, which allows running Ku
    eksctl create cluster --name demo-cluster --region us-east-1 --fargate
 ```
 2. **Update Kubeconfig to Connect with the Cluster**
+
 To interact with the EKS cluster, update the kubeconfig file with your cluster's credentials.
 ```bash
    aws eks update-kubeconfig --name demo-cluster --region us-east-1
