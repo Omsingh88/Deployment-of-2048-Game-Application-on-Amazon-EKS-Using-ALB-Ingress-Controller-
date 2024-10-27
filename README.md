@@ -23,17 +23,18 @@ Before you begin, ensure you have the following:
 ## Project Setup
 
 1. **Create EKS Cluster with Fargate**  
-   Use the following command to create an EKS cluster with Fargate:
-   ```bash
+The first step is to set up an EKS cluster with Fargate, which allows running Kubernetes pods without managing the underlying infrastructure.
+```bash
    eksctl create cluster --name demo-cluster --region us-east-1 --fargate
-Update Kubeconfig
-Update your kubeconfig file to access the newly created EKS cluster:
+```
+2. Update Kubeconfig to Connect with the Cluster
+To interact with the EKS cluster, update the kubeconfig file with your cluster's credentials.
 
 ```bash
-aws eks update-kubeconfig --name demo-cluster --region us-east-1
+   aws eks update-kubeconfig --name demo-cluster --region us-east-1
 ```
-Create Fargate Profile
-Create a Fargate profile for the application:
+3. Create Fargate Profile
+Define a Fargate profile to specify which pods run on Fargate. This configuration isolates the game application into its namespace, game-2048.
 ```bash
 eksctl create fargateprofile \
   --cluster demo-cluster \
@@ -41,13 +42,19 @@ eksctl create fargateprofile \
   --name fargate-profile \
   --namespace game-2048
 ```
-Deploy the Game Application
-Apply the YAML configuration for the 2048 game:
+4. Deploy the 2048 Game Application
+Download and apply the YAML configuration file that defines the Kubernetes resources needed for deploying the 2048 game. This configuration includes a Deployment, Service, and Ingress.
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/examples/2048/2048_full.yaml
 ```
 Here’s the content of the configuration:
+This YAML configuration defines:
+
+Namespace for isolating the game resources.
+Deployment with 5 replicas of the 2048 game app.
+Service of type NodePort for exposing the application internally.
+Ingress resource for managing external access via an Application Load Balancer (ALB).
 ```yaml
 apiVersion: v1
 kind: Namespace
@@ -111,29 +118,29 @@ spec:
               port:
                 number: 80  
 ```
-Using IAM OIDC Provider
-Integrate IAM with the OIDC provider:
+5. Associate IAM OIDC Provider with the EKS Cluster
+To allow AWS services to access Kubernetes resources, create an IAM OIDC provider.
 
 ```bash
-eksctl utils associate-iam-oidc-provider --cluster demo-cluster --approve
+   eksctl utils associate-iam-oidc-provider --cluster demo-cluster --approve
 ```
-Download IAM Policy
-Download the IAM policy for the ALB Ingress Controller:
+6. Download the IAM Policy for ALB Controller
+Download the IAM policy that grants the necessary permissions for the ALB Ingress Controller.
 
 ```bash
-curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/install/iam_policy.json
+   curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/install/iam_policy.json
 ```
 
-Create IAM Policy
-Create the IAM policy:
+7. Create the IAM Policy
+Create an IAM policy in AWS using the policy file downloaded above.
 
 ```bash
-aws iam create-policy \
+   aws iam create-policy \
     --policy-name AWSLoadBalancerControllerIAMPolicy \
     --policy-document file://iam_policy.json
 ```
-Create IAM Role
-Create an IAM role for the ALB Ingress Controller:
+8. Create IAM Role for the ALB Ingress Controller
+This role enables the ALB Ingress Controller to authenticate and interact with AWS resources.
 ```
 eksctl create iamserviceaccount \
   --cluster=demo-cluster \
@@ -143,14 +150,19 @@ eksctl create iamserviceaccount \
   --attach-policy-arn=arn:aws:iam::<your-aws-account-id>:policy/AWSLoadBalancerControllerIAMPolicy \
   --approve
 ```
-Deploy ALB Controller
-Add the Helm repository and install the ALB controller:
+9. Deploy the AWS ALB Ingress Controller
+Add the EKS Helm repository, update it, and install the ALB Ingress Controller on your cluster.
+- Add Helm Repository
 
 ```
 helm repo add eks https://aws.github.io/eks-charts
-
+```
+- Update Helm Repository
+```
 helm repo update eks
-
+```
+- Install ALB Controller
+```
 helm install aws-load-balancer-controller eks/aws-load-balancer-controller \            
   -n kube-system \
   --set clusterName=<your-cluster-name> \
@@ -159,12 +171,12 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
   --set region=<region> \
   --set vpcId=<your-vpc-id>
 ```
-Verify the Deployment
-Check if the ALB Ingress Controller is running:
+10. Verify the Deployment
+Check if the ALB Ingress Controller has been successfully deployed.
 ```
 kubectl get deployment -n kube-system aws-load-balancer-controller
 ```
-Access the Application
+11. Access the 2048 Game Application
 Finally, check the ingress to get the address or domain to access the application in your browser:
 ```
 kubectl get ingress -n game-2048
