@@ -27,11 +27,12 @@ The first step is to set up an EKS cluster with Fargate, which allows running Ku
 ```bash
    eksctl create cluster --name demo-cluster --region us-east-1 --fargate
 ```
-2. **Update Kubeconfig to Connect with the Cluster**
+### 2. Update Kubeconfig to Connect with the Cluster
 
 To interact with the EKS cluster, update the kubeconfig file with your cluster's credentials.
+
 ```bash
-   aws eks update-kubeconfig --name demo-cluster --region us-east-1
+aws eks update-kubeconfig --name demo-cluster --region us-east-1
 ```
 3. **Create Fargate Profile**
  Define a Fargate profile to specify which pods run on Fargate. This configuration isolates the game application into its namespace, game-2048.
