@@ -43,7 +43,7 @@ eksctl create fargateprofile \
   --name fargate-profile \
   --namespace game-2048
 ```
-4. **Deploy the 2048 Game Application**
+### 4. **Deploy the 2048 Game Application**
    Download and apply the YAML configuration file that defines the Kubernetes resources needed for deploying the 2048 game. This configuration includes a Deployment, Service, and Ingress.
 
 ```bash
@@ -52,10 +52,10 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-bala
 Here’s the content of the configuration:
 This YAML configuration defines:
 
-**Namespace for isolating the game resources.**
-**Deployment with 5 replicas of the 2048 game app.**
-**Service of type NodePort for exposing the application internally.**
-**Ingress resource for managing external access via an Application Load Balancer (ALB).**
+### **Namespace for isolating the game resources.**
+### **Deployment with 5 replicas of the 2048 game app.**
+### **Service of type NodePort for exposing the application internally.**
+### **Ingress resource for managing external access via an Application Load Balancer (ALB).**
 ```yaml
 apiVersion: v1
 kind: Namespace
@@ -119,20 +119,20 @@ spec:
               port:
                 number: 80  
 ```
-5. **Associate IAM OIDC Provider with the EKS Cluster**
+### 5. **Associate IAM OIDC Provider with the EKS Cluster**
 To allow AWS services to access Kubernetes resources, create an IAM OIDC provider.
 
 ```bash
    eksctl utils associate-iam-oidc-provider --cluster demo-cluster --approve
 ```
-6. **Download the IAM Policy for ALB Controller**
+### 6. **Download the IAM Policy for ALB Controller**
 Download the IAM policy that grants the necessary permissions for the ALB Ingress Controller.
 
 ```bash
    curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/install/iam_policy.json
 ```
 
-7. **Create the IAM Policy**
+### 7. **Create the IAM Policy**
 Create an IAM policy in AWS using the policy file downloaded above.
 
 ```bash
@@ -140,7 +140,7 @@ Create an IAM policy in AWS using the policy file downloaded above.
     --policy-name AWSLoadBalancerControllerIAMPolicy \
     --policy-document file://iam_policy.json
 ```
-8. **Create IAM Role for the ALB Ingress Controller**
+### 8. **Create IAM Role for the ALB Ingress Controller**
 This role enables the ALB Ingress Controller to authenticate and interact with AWS resources.
 ```
 eksctl create iamserviceaccount \
@@ -151,7 +151,7 @@ eksctl create iamserviceaccount \
   --attach-policy-arn=arn:aws:iam::<your-aws-account-id>:policy/AWSLoadBalancerControllerIAMPolicy \
   --approve
 ```
-9. **Deploy the AWS ALB Ingress Controller**
+### 9. **Deploy the AWS ALB Ingress Controller**
 Add the EKS Helm repository, update it, and install the ALB Ingress Controller on your cluster.
 - Add Helm Repository
 
@@ -172,12 +172,12 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
   --set region=<region> \
   --set vpcId=<your-vpc-id>
 ```
-10. **Verify the Deployment**
+###10. **Verify the Deployment**
 Check if the ALB Ingress Controller has been successfully deployed.
 ```
 kubectl get deployment -n kube-system aws-load-balancer-controller
 ```
-11. **Access the 2048 Game Application**
+### 11. **Access the 2048 Game Application**
 Finally, check the ingress to get the address or domain to access the application in your browser:
 ```
 kubectl get ingress -n game-2048
