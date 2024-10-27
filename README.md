@@ -34,7 +34,7 @@ To interact with the EKS cluster, update the kubeconfig file with your cluster's
    aws eks update-kubeconfig --name demo-cluster --region us-east-1
 ```
 3. Create Fargate Profile
-Define a Fargate profile to specify which pods run on Fargate. This configuration isolates the game application into its namespace, game-2048.
+   Define a Fargate profile to specify which pods run on Fargate. This configuration isolates the game application into its namespace, game-2048.
 ```bash
 eksctl create fargateprofile \
   --cluster demo-cluster \
@@ -43,7 +43,7 @@ eksctl create fargateprofile \
   --namespace game-2048
 ```
 4. Deploy the 2048 Game Application
-Download and apply the YAML configuration file that defines the Kubernetes resources needed for deploying the 2048 game. This configuration includes a Deployment, Service, and Ingress.
+   Download and apply the YAML configuration file that defines the Kubernetes resources needed for deploying the 2048 game. This configuration includes a Deployment, Service, and Ingress.
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/examples/2048/2048_full.yaml
