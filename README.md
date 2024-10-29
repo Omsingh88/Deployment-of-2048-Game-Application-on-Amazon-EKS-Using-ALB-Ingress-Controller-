@@ -18,7 +18,5 @@ Once these are installed, use the following command to configure your AWS creden
 ```bash
 aws configure
 ```
-```markdown
-<img src="images/cluster_creation.png" width="600" alt="Cluster Creation Progress">
-```
+![aws](images/1.png)
 
