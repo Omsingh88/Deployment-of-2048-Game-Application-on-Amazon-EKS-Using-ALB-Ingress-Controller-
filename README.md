@@ -1,4 +1,4 @@
-# EKS Deployment of 2048 Game Application with ALB Ingress Controller..
+# EKS Deployment of 2048 Game Application with ALB Ingress Controller...
 
 ## Overview
 This project demonstrates deploying the 2048 game on Amazon EKS with Fargate and ALB. By following this guide, you’ll have a fully functioning game on AWS with load balancing and scalability.
